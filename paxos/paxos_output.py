@@ -84,5 +84,9 @@ Accepter 1:  74, Content-79747
 >> Broadcast already accept by Proposer 0
 Accepter 2:  74, Content-79747
 
-# Proposer 2 完成广播
+# Proposer 2 完成广播，但是其内容是 Proposer 1 的提案
 
+Time: 0.573580s
+Accepter 0:  28, Content-79747
+Accepter 1:  74, Content-79747
+Accepter 2:  74, Content-79747
