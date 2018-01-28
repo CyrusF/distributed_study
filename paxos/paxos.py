@@ -1,5 +1,5 @@
-import time
-import threading
+from time import sleep, time
+from threading import Thread
 from random import randint
 
 class Proposal:
@@ -59,7 +59,6 @@ class Proposer:
 		# broadcast
 		if total_lock > (len(self.accepters) / 2) + 1:
 			for accepter in self.accepters:
-				time.sleep(randint(0, 10) * 0.001)
 				res = accepter.accept_result(self.proposal)
 				if res[0] == "Accept":
 					print(">> %s by %s" % (res[1], self.name))
@@ -81,7 +80,7 @@ class Accepter:
 		self.delay = delay
 		
 	def __self_delay(self):
-		time.sleep(randint(0, self.delay) * 0.001)
+		sleep(randint(0, self.delay) * 0.001)
 		
 	def accept_pre_proposal(self, pre_proposal):
 		self.__self_delay()
@@ -124,19 +123,25 @@ def demo(n):
 		
 	proposers = []
 	for i in range(0,n):
-		pid = randint(0, 100)
+		pid = randint(0, n * 100)
 		pvalue = "Content-%d" % randint(10000, 100000)
 		proposers.append(Proposer(i, Proposal(pid, pvalue), accepters))
 		print("Proposer %d: %3d, %s" % (i, pid, pvalue))
 	print()
-		
+	
+	threads = []	
 	for i in range(0, n):
 		proposer = proposers[i]
-		t = threading.Thread(target=make_proposal, args=(proposer,))
-		t.start()
-		time.sleep(0.001 * randint(0, 1000))
-		
-	
+		threads.append(Thread(target=make_proposal, args=(proposer,)))
+	start_time = time()
+	for thread in threads:
+		thread.start()
+	for thread in threads:
+		thread.join()	
+	end_time = time()
+	print("Time: %.6fs" % (end_time - start_time))
+	for accepter in accepters:
+		print("%s: %3d, %s" % (accepter.name, accepter.maxid, str(accepter.value)))
 				
 if __name__ == "__main__":
 	demo(3)			
